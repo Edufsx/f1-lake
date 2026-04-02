@@ -2,7 +2,6 @@
 .env
 
 # Arquivos
-*.parquet
 *.json
 *.csv
 *.db
