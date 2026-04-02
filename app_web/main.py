@@ -11,14 +11,15 @@ class Driver:
 
 def format_color(x):
     
-    if x is None:
+    if not x:
         return "#ffffff"
     
-    elif x.startswith("#"):
+    elif len(x)==7:
         return x.lower()
-    
+  
     else:
         return f"#{x}".lower()
+
 @st.cache_resource(ttl="1d")
 def get_predictions(data):
     
@@ -26,7 +27,7 @@ def get_predictions(data):
 
     data["dt_ref"] = data["dt_ref"].astype(str)
 
-    df = data[data['dt_ref'] > '2020-01-01'].copy() 
+    df = data.copy()
 
     cols_to_fill = df.columns[3:-3]
     df[cols_to_fill] = df[cols_to_fill].fillna(-10000)
