@@ -53,8 +53,6 @@ def get_predictions(data):
    
     df = df.merge(unique_drivers_name, on='driverid')
 
-    df = df.sort_values(by="dt_ref").copy()
-
     return df
 
 data = pd.read_parquet("../data/data_to_predict/fs_f1_driver_all.parquet")
@@ -117,6 +115,12 @@ data_chart = (data_filtered.pivot_table(index='dt_ref',
                                       values='predictions')
                                       .reset_index())
 
+column_config = {
+    i: st.column_config.NumberColumn(
+        i, format="percent"
+    ) for i in data_chart.columns[1:]
+}
+
 graph, tables = st.tabs(["Gráfico", "Tabelas"])
 
 with graph:
@@ -131,7 +135,14 @@ with graph:
  
 with tables:
     st.markdown("Tabela referente ao Gráfico")
-    st.dataframe(data_chart, hide_index=True)
+    st.dataframe(
+        data_chart, 
+        hide_index=True, 
+        column_config=column_config
+    )
     
     st.markdown("Analytical Base Table")
-    st.dataframe(df, hide_index=True)
+    st.dataframe(
+        data_filtered,
+        hide_index=True
+    )

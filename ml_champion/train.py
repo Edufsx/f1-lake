@@ -79,18 +79,17 @@ missing = imputation.ArbitraryNumberImputer(
 
 # %%
  
-""" clf = ensemble.RandomForestClassifier(
+clf = ensemble.RandomForestClassifier(
     min_samples_leaf=50,
     n_estimators=500,
     random_state=42,
     n_jobs=2)
- """
 
-clf = ensemble.AdaBoostClassifier(
+""" clf = ensemble.AdaBoostClassifier(
     n_estimators=500,
     learning_rate=0.001,
     random_state=42)
-
+ """
 
 model = pipeline.Pipeline(steps=[
     ('Imputation', missing),
@@ -144,3 +143,9 @@ with mlflow.start_run():
     mlflow.sklearn.log_model(model, name="model")
 
 # %%
+model_df = pd.Series({
+    "model": model,
+    "features": features,
+})
+
+model_df.to_pickle("../app_web/model.pkl")
