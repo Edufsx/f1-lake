@@ -1,0 +1,13 @@
+# Enviroment
+.env
+
+# Arquivos
+*.parquet
+*.json
+*.csv
+*.db
+
+# Pastas
+.vscode/
+__pycache__/
+mlartifacts/
