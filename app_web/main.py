@@ -42,6 +42,17 @@ def get_predictions(data):
 
     df['teamcolor'] = df['teamcolor'].apply(format_color)
 
+    unique_drivers_name = (df[['driverid', 'dt_ref', 'fullname']]
+                           .dropna()
+                           .sort_values(by=['driverid', 'dt_ref'])
+                           .drop_duplicates(subset='driverid',
+                                            keep='first')
+                           .drop('dt_ref', axis=1)
+                           .rename(columns={'fullname': 'fullname_correct'})
+    )
+   
+    df = df.merge(unique_drivers_name, on='driverid')
+
     df = df.sort_values(by="dt_ref").copy()
 
     return df
@@ -51,14 +62,14 @@ data = pd.read_parquet("../data/data_to_predict/fs_f1_driver_all.parquet")
 df = get_predictions(data)
 
 drivers_data = (
-    data[['driverid', 'fullname']]
-    .sort_values(['driverid', 'fullname'])
+    df[['driverid', 'fullname_correct']]
+    .sort_values(['driverid', 'fullname_correct'])
     .drop_duplicates(subset=['driverid'], keep='first')
     .dropna()
 )
 
 drivers = [
-    Driver(i['driverid'], i['fullname']) 
+    Driver(i['driverid'], i['fullname_correct']) 
     for i in drivers_data.to_dict(orient='records')
 ]
 
@@ -95,14 +106,14 @@ year_selected = col2.multiselect(
 data_filtered = df[df["driverid"].isin([i.driverid for i in driver_selected])]
 data_filtered = data_filtered[data_filtered["year"].isin(year_selected)]
 
-colors = (data_filtered[['fullname', 'dt_ref', 'teamcolor']]
-          .sort_values(by=['fullname', 'dt_ref'], ascending=[True, False])
-          .drop_duplicates(subset=['fullname'], 
+colors = (data_filtered[['fullname_correct', 'dt_ref', 'teamcolor']]
+          .sort_values(by=['fullname_correct', 'dt_ref'], ascending=[True, False])
+          .drop_duplicates(subset=['fullname_correct'], 
                            keep='first')
           ['teamcolor'].tolist())
 
 data_chart = (data_filtered.pivot_table(index='dt_ref', 
-                                      columns='fullname', 
+                                      columns='fullname_correct', 
                                       values='predictions')
                                       .reset_index())
 
