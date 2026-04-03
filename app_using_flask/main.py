@@ -38,7 +38,7 @@ def get_predictions(data):
     resp_json = resp.json()['predictions'] 
 
     pred_1_map = {k: v['1'] for k, v in resp_json.items()}   
-    df = df.assign(predictions = df["id"].map(pred_1_map))
+    df = df.assign(prob_win = df["id"].map(pred_1_map))
 
     df['teamcolor'] = df['teamcolor'].apply(format_color)
 
@@ -73,7 +73,7 @@ drivers = [
 
 most_prob = (
     df[df['dt_ref'] == df['dt_ref'].max()]
-    .sort_values(by="predictions", ascending=False)
+    .sort_values(by="prob_win", ascending=False)
     .head(3)
 )
 
@@ -112,7 +112,7 @@ colors = (data_filtered[['fullname_correct', 'dt_ref', 'teamcolor']]
 
 data_chart = (data_filtered.pivot_table(index='dt_ref', 
                                       columns='fullname_correct', 
-                                      values='predictions')
+                                      values='prob_win')
                                       .reset_index())
 
 column_config = {
