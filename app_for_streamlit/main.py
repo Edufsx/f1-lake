@@ -21,7 +21,7 @@ def format_color(x):
 
 @st.cache_resource(ttl="1d")
 def load_model():
-    df_model = pd.read_pickle("model.pkl")
+    df_model = pd.read_pickle("app_for_streamlit/model.pkl")
 
     model = df_model["model"]
     features = df_model["features"]
@@ -60,7 +60,7 @@ def get_predictions(data):
 
     return df
 
-data = pd.read_parquet("../data/data_to_predict/fs_f1_driver_all.parquet")
+data = pd.read_parquet("data/data_to_predict/fs_f1_driver_all.parquet")
 
 df = get_predictions(data)
 
