@@ -60,7 +60,7 @@ def get_predictions(data):
 
     return df
 
-data = pd.read_parquet("data/data_to_predict/fs_f1_driver_all.parquet")
+data = pd.read_parquet("app_for_streamlit/fs_f1_driver_all.parquet")
 
 df = get_predictions(data)
 
