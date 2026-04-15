@@ -13,8 +13,6 @@ NEKT_TOKEN = os.getenv("NEKT_TOKEN")
 nekt.data_access_token = NEKT_TOKEN
 
 #%%
-nekt.data_access_token = "z5MY5qxzntV3t5bLXwmJrYF66dtItFNyeL11GU35unpyum2IjZIkFEOhW1LXZO0jo3247zSsFzk27T2cZiwJW1gkcUmy8EdEekdPukY4RrGPtWJVXjkMAD0kxXdlZLkG9AMsPE1QzI4s685LHTujHX7K9PYev6Slvmknv096XB2V3AIgl5AJslpVSokVJmmXz2igNQFauEoqZGcfvjhjP3L03CCdr3rdE9YluAIb62Eik1OvFaw75BDGxAiebVcy"
-#%%
 # Inicializa o Spark e conecta com Bigquery para leitura de dados
 spark = (
     SparkSession.builder
@@ -30,13 +28,13 @@ spark = (
 # Estabelece a engine de execução do Nekt como Spark
 nekt.engine = "spark"
 #%%
-
 # Carrega feature histórica dos pilotos localizada na nekt como view temporária
 nekt.load_table(
     layer_name="Silver",
     table_name="fs_f1_driver_all",
 ).createOrReplaceTempView("fs_f1_driver_all")
 
+#%%
 # Carrega tabela com campeões históricos como view temporária
 nekt.load_table(
     layer_name="Silver",
@@ -86,11 +84,11 @@ df_fs_all = spark.sql(query_fs_all)
 (df_fs_all.write.mode("overwrite")
  .option("header", True)
  .option("sep", ";")
- .parquet("../app_for_streamlit/fs_f1_driver_all_tmp"))
+ .parquet("../data/fs_f1_driver_all_tmp"))
 #%%
 # Caminho da pasta temporária e da pasta final
-output_folder = "../app_for_streamlit/fs_f1_driver_all_tmp"
-final_path = "../app_for_streamlit/fs_f1_driver_all.parquet"
+output_folder = "../data/fs_f1_driver_all_tmp"
+final_path = "../data/data_to_predict/fs_f1_driver_all.parquet"
 
 # Itera todos os arquivos dentro da pasta temporária
 for file in os.listdir(output_folder):
