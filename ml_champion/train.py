@@ -19,7 +19,7 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_URI"))
 mlflow.set_experiment(experiment_id=1)
 #%%
 # Carrega a Analytical Base Table (ABT) para treinamento do modelo 
-df = pd.read_csv("../data/abt_f1_drivers_champion.csv", sep=";")
+df = pd.read_csv("../data/processed/abt_f1_drivers_champion.csv", sep=";")
 
 df["dt_ref"] = pd.to_datetime(df["dt_ref"])
 df["year"] = df["dt_ref"].dt.year
@@ -187,8 +187,8 @@ for model_name in model_names:
         plt.title(f"Curva ROC ({model_name})")
 
         # Salva e registra a Curva ROC como artefato no MLflow
-        plt.savefig(f"artifacts/roc_curve_{model_name}.png")
-        mlflow.log_artifact(f"artifacts/roc_curve_{model_name}.png")
+        plt.savefig(f"../mlflow/artifacts/roc_curve_{model_name}.png")
+        mlflow.log_artifact(f"../mlflow/artifacts/roc_curve_{model_name}.png")
 
         # --- Feature Importance ---
         
@@ -202,10 +202,10 @@ for model_name in model_names:
         ).sort_values(ascending=False)
 
         # Salva a feature importance das variáveis em um arquivo markdown
-        feature_importance.to_markdown(f"artifacts/feature_importance_{model_name}.md")
+        feature_importance.to_markdown(f"../mlflow/artifacts/feature_importance_{model_name}.md")
         
         # Registra o arquivo como artefato no MLflow para versionamento
-        mlflow.log_artifact(f"artifacts/feature_importance_{model_name}.md")
+        mlflow.log_artifact(f"../mlflow/artifacts/feature_importance_{model_name}.md")
 
         # --- LOG Final ---
         # Re-treina o modelo final com todo o dataset disponível
@@ -222,4 +222,4 @@ model_df = pd.Series({
 })
 
 # Salva o objeto serializado em formato .pkl para uso em Aplicação Web
-model_df.to_pickle("../app_for_streamlit_cloud/model.pkl")
+model_df.to_pickle("models/model.pkl")

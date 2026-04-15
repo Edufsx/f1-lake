@@ -1,11 +1,10 @@
 # %%
 import streamlit as st
 import pandas as pd 
-import requests
 
 # Classe simples para representar os pilotos (usada no multiselect)
 class Driver:
-
+    
     def __init__(self, driverid, driver_name):
         self.driverid = driverid
         self.driver_name = driver_name
@@ -22,7 +21,19 @@ def format_color(x):
     else:
         return f"#{x}".lower()
 
-# Cacheia as predições para evitar chamadas repetidas à API
+
+@st.cache_resource(ttl="1d")
+def load_model():
+
+    # Carrega modelo treinado e lista de features utilizadas na inferência
+    df_model = pd.read_pickle("ml_champion/models/model.pkl")
+
+    model = df_model["model"]
+    features = df_model["features"]
+
+    return model, features
+
+
 @st.cache_resource(ttl="1d")
 def get_predictions(data):
     
@@ -38,18 +49,14 @@ def get_predictions(data):
     cols_to_fill = df.columns[3:-3]
     df[cols_to_fill] = df[cols_to_fill].fillna(-10000)
 
-    # Transforma os dados no formato esperado pela API
-    payload = {"values": df.to_dict(orient='records')}
+    # Carrega modelo e schema de features
+    model, features = load_model()
 
-    # Realiza requisição para o serviço de predição (Flask API)
-    resp = requests.post("http://127.0.0.1:5001/predict", json=payload)
-    resp_json = resp.json()['predictions'] 
+    # Gera probabilidade da classe '1' (1 = piloto campeão)
+    proba = model.predict_proba(df[features])[:,1]
 
-    # Extrai a probabilidade da classe '1' (1 = piloto campeão)
-    pred_1_map = {k: v['1'] for k, v in resp_json.items()} 
-
-    # Associa a probabilidade ao dataframe original
-    df = df.assign(prob_win = df["id"].map(pred_1_map))
+    # Adiciona probabilidade ao dataframe original
+    df = df.assign(prob_win=proba)
 
     # Padroniza as cores das equipes em formato válido
     df['teamcolor'] = df['teamcolor'].apply(format_color)
@@ -63,14 +70,14 @@ def get_predictions(data):
                            .drop('dt_ref', axis=1)
                            .rename(columns={'fullname': 'fullname_correct'})
     )
-    
+   
     # Adiciona o nome correto dos pilotos no dataframe
     df = df.merge(unique_drivers_name, on='driverid')
 
     return df
 
 # Carrega base de dados para predição do modelo
-data = pd.read_parquet("../data/data_to_predict/fs_f1_driver_all.parquet")
+data = pd.read_parquet("data/data_to_predict/fs_f1_driver_all.parquet")
 
 # Executa o pipeline de predição
 df = get_predictions(data)
@@ -174,7 +181,6 @@ with graph:
         y_label='Prob. Vitória Campeonato',
         color=colors
     )
-
  
 with tables:
     

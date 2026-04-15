@@ -96,7 +96,7 @@ class CollectResults:
         - `mode`: str -> "R" (Race) ou "S" (Sprint).
         """
         
-        file_name = f"../data/{year}_{gp:02}_{mode}.parquet"
+        file_name = f"../../data/raw/{year}_{gp:02}_{mode}.parquet"
 
         df.to_parquet(file_name, index=False)
 

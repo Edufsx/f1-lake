@@ -1,0 +1,30 @@
+services:
+
+  mlflow_server:
+    build:
+      context: mlflow/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow:/mlflow 
+
+  flask_api:
+    build: 
+      context: apps/flask_api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+  
+  f1_app:
+    build: 
+      context: apps/streamlit_app_local
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
