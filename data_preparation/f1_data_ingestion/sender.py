@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument("--bucket", type=str)
     
     parser.add_argument("--bucket_path", type=str)
-    parser.add_argument("--folder", default="../../data/raw", type=str)
+    parser.add_argument("--folder", default="data/raw", type=str)
     
     args = parser.parse_args()
     

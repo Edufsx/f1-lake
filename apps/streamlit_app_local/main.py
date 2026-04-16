@@ -42,7 +42,7 @@ def get_predictions(data):
     payload = {"values": df.to_dict(orient='records')}
 
     # Realiza requisição para o serviço de predição (Flask API)
-    resp = requests.post("http://flask_api:5001/predict", json=payload)
+    resp = requests.post("http://localhost:5001/predict", json=payload)
     resp_json = resp.json()['predictions'] 
 
     # Extrai a probabilidade da classe '1' (1 = piloto campeão)
@@ -70,7 +70,7 @@ def get_predictions(data):
     return df
 
 # Carrega base de dados para predição do modelo
-data = pd.read_parquet("/data/data_to_predict/fs_f1_driver_all.parquet")
+data = pd.read_parquet("data/data_to_predict/fs_f1_driver_all.parquet")
 
 # Executa o pipeline de predição
 df = get_predictions(data)

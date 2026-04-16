@@ -67,7 +67,7 @@ FROM tb_abt
 df_abt = spark.sql(query_abt).toPandas()
 
 # Salva a ABT em formato CSV
-df_abt.to_csv("../../data/processed/abt_f1_drivers_champion.csv", 
+df_abt.to_csv("data/processed/abt_f1_drivers_champion.csv", 
           index=False,
           sep=";")
 
@@ -84,11 +84,11 @@ df_fs_all = spark.sql(query_fs_all)
 (df_fs_all.write.mode("overwrite")
  .option("header", True)
  .option("sep", ";")
- .parquet("../../data/fs_f1_driver_all_tmp"))
+ .parquet("data/fs_f1_driver_all_tmp"))
 #%%
 # Caminho da pasta temporária e da pasta final
-output_folder = "../../data/fs_f1_driver_all_tmp"
-final_path = "../../data/data_to_predict/fs_f1_driver_all.parquet"
+output_folder = "data/fs_f1_driver_all_tmp"
+final_path = "data/data_to_predict/fs_f1_driver_all.parquet"
 
 # Itera todos os arquivos dentro da pasta temporária
 for file in os.listdir(output_folder):

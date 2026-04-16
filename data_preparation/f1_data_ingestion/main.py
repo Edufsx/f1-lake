@@ -34,7 +34,7 @@ while True:
         bucket_name=BUCKET_NAME, 
         bucket_folder="f1/results"
     )
-    sender_data.process_folder("../../data/raw")
+    sender_data.process_folder("data/raw")
 
     print("Iteração Finalizada")
     
